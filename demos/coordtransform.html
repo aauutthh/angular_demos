@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>coordTransform</title>
+</head>
+<body>
+<h1>坐标转换工具</h1>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<script src="./coordtransform.js"></script>
+<script src="./.coordcld.js"></script>
+
+<div ng-app="coordtransform" ng-controller="coordtransformCtrl">
+    coordtransform:<br>
+    <input type="text" ng-model="origpos"><br>
+    <br>
+    <button ng-click="change()">change</button>
+    <br>
+    result:<br>
+    <table>
+        <tr>
+            <td>百度经纬度坐标转国测局坐标 </td>
+            <td>
+                <span>{{bd09togcj02}}</span>
+            </td>
+        </tr>
+        <tr>
+            <td>国测局坐标转百度经纬度坐标</td>
+            <td>
+                <span>{{gcj02tobd09}} </span><br/>
+            </td>
+        </tr>
+        <tr>
+            <td>wgs84转国测局坐标</td>
+            <td>
+                <span>{{wgs84togcj02}} </span><br/>
+            </td>
+        </tr>
+        <tr>
+            <td>国测局坐标转wgs84坐标</td>
+            <td>
+                <span>{{gcj02towgs84}} </span><br/>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>wgs84 转 凯立德</strong></td>
+            <td>
+                <span>{{wgs84toCld}} </span><br/>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>gcj02 转 凯立德</strong></td>
+            <td>
+                <span>{{gcj02toCld}} </span><br/>
+            </td>
+        </tr>
+        <table>
+    <br><br>
+</div>
+
+<script>
+// let FACTOR=3600000
+// let LONOFF=333700
+// let LATOFF=237300
+// function gcj02toCld(lon,lat){
+//   return [Math.round(lon * FACTOR + LONOFF) , Math.round(lat * FACTOR + LATOFF)]
+// }
+var app = angular.module('coordtransform', []);
+app.controller('coordtransformCtrl', function($scope) {
+    $scope.origpos = '116.404, 39.915'
+    $scope.change= function() {
+        let coord = $scope.origpos.split(',')
+        coord = [parseFloat(coord[0]), parseFloat(coord[1])]
+        $scope.bd09togcj02 = coordtransform.bd09togcj02(coord[0],coord[1]);
+        $scope.gcj02tobd09 = coordtransform.gcj02tobd09(coord[0],coord[1]);
+        $scope.wgs84togcj02 = coordtransform.wgs84togcj02(coord[0],coord[1]);
+        $scope.gcj02towgs84 = coordtransform.gcj02towgs84(coord[0],coord[1]);
+// GCJ * 360 0000 + OFFSET = CLD
+        $scope.wgs84toCld = coordcld.gcj02toCld($scope.wgs84togcj02[0],$scope.wgs84togcj02[1])
+        $scope.gcj02toCld = coordcld.gcj02toCld(coord[0],coord[1])
+    };
+});
+</script>
+
+</body>
+</html>
